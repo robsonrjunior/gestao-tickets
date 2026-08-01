@@ -1,0 +1,20 @@
+# Aplicação gestao-tickets.
+# Pré-requisitos: make package (WAR em target/) e utils no ar
+#   (docker compose -f docker-compose.utils.yml up -d).
+# Uso: docker compose up -d --build
+services:
+  app:
+    build: .
+    image: gestao-tickets:local
+    container_name: gestao-tickets-app
+    ports:
+      - "8080:8080"
+    env_file: .env
+    environment:
+      MYSQL_HOST: mysql
+    networks:
+      - gestao-tickets
+
+networks:
+  gestao-tickets:
+    name: gestao-tickets

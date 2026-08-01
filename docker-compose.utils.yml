@@ -1,0 +1,24 @@
+# Utilitários de desenvolvimento (MySQL e futuros).
+# Uso: docker compose -f docker-compose.utils.yml up -d
+services:
+  mysql:
+    image: mysql:lts-oraclelinux9
+    container_name: gestao-tickets-db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: gestao_tickets
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - gestao-tickets
+
+volumes:
+  mysql_data:
+
+networks:
+  gestao-tickets:
+    name: gestao-tickets

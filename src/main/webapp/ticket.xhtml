@@ -1,0 +1,210 @@
+<ui:composition
+    template="/WEB-INF/templates/layout.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="jakarta.faces.html"
+    xmlns:f="jakarta.faces.core"
+    xmlns:p="primefaces"
+    xmlns:ui="jakarta.faces.facelets">
+    <ui:define name="content">
+        <f:event type="preRenderView" listener="#{ticketController.loadForm}" />
+        <style>
+            .ui-toolbar {
+                border: 0 !important;
+            }
+            .ticket-actions .ui-button {
+                margin: 0 !important;
+            }
+            .ticket-actions .ui-button:not(:first-child) {
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+            }
+            .ticket-actions .ui-button:not(:last-child) {
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+            .ui-message {
+                border: 0 !important;
+                background: none !important;
+                padding: 0 !important;
+                margin: 0.25rem 0 0 0 !important;
+            }
+            .ui-message:empty {
+                display: none;
+            }
+            .ui-message .ui-message-error-detail {
+                display: block;
+                font-size: smaller;
+            }
+        </style>
+        <div class="h-full w-full flex flex-column">
+            <h:form id="ticketForm" style="display: flex; flex-direction: column; flex: 1; min-height: 0">
+                <p:growl id="messages" showDetail="true" />
+                <p:toolbar>
+                    <p:toolbarGroup align="left" styleClass="border-none">
+                        <i class="pi pi-fw pi-ticket mr-2" />
+                        <span style="font-weight: bold">
+                            <h:outputText rendered="#{empty ticketController.ticket.title}" value="Tickets - Novo ticket" />
+                            <h:outputText
+                                rendered="#{not empty ticketController.ticket.title}"
+                                value="Tickets - #{ticketController.ticket.title}" />
+                        </span>
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="right" styleClass="border-none">
+                        <p:outputPanel rendered="#{!ticketController.viewMode and ticketController.canSave()}" styleClass="ticket-actions">
+                            <p:commandButton
+                                value="Salvar"
+                                icon="pi pi-check"
+                                action="#{ticketController.save}"
+                                ajax="false" />
+                            <p:button
+                                value="Cancelar"
+                                icon="pi pi-times"
+                                outcome="ticket-list"
+                                styleClass="ui-button-secondary" />
+                        </p:outputPanel>
+                        <p:outputPanel rendered="#{ticketController.viewMode}" styleClass="ticket-actions">
+                            <p:button
+                                value="Editar"
+                                icon="pi pi-pencil"
+                                outcome="ticket"
+                                styleClass="ui-button-success"
+                                rendered="#{currentUser.admin}">
+                                <f:param name="id" value="#{ticketController.id}" />
+                                <f:param name="mode" value="edit" />
+                            </p:button>
+                            <p:button
+                                value="Voltar"
+                                icon="pi pi-arrow-left"
+                                outcome="ticket-list"
+                                styleClass="ui-button-secondary" />
+                        </p:outputPanel>
+                    </p:toolbarGroup>
+                </p:toolbar>
+
+                <p:scrollPanel mode="native" styleClass="w-full p-0 m-0 border-noround border-none flex-grow-1">
+                    <div class="m-3">
+                        <h:outputText value="#{ticketController.pageTitle}" styleClass="text-xl font-bold block mb-3" />
+
+                        <p:outputPanel class="ui-fluid">
+                            <div class="grid">
+                                <ui:fragment rendered="#{not empty ticketController.ticket.id}">
+                                    <div class="col-4 mb-1">
+                                        <p:outputLabel for="ticketId" value="ID" />
+                                        <p:inputText
+                                            id="ticketId"
+                                            value="#{ticketController.ticket.id}"
+                                            readonly="true" />
+                                    </div>
+                                    <div class="col-8 mb-1"></div>
+                                </ui:fragment>
+
+                                <div class="col-12 mb-1">
+                                    <p:outputLabel for="title" value="Titulo" />
+                                    <p:inputText
+                                        id="title"
+                                        value="#{ticketController.ticket.title}"
+                                        required="true"
+                                        readonly="#{ticketController.viewMode}" />
+                                    <p:message id="titleMsg" for="title" display="text" />
+                                </div>
+
+                                <div class="col-12 mb-1">
+                                    <p:outputLabel for="description" value="Descricao" />
+                                    <p:inputTextarea
+                                        id="description"
+                                        value="#{ticketController.ticket.description}"
+                                        rows="5"
+                                        readonly="#{ticketController.viewMode}" />
+                                    <p:message id="descriptionMsg" for="description" display="text" />
+                                </div>
+
+                                <div class="col-12 md:col-6 mb-1">
+                                    <p:outputLabel for="status" value="Status" />
+                                    <p:selectOneMenu
+                                        id="status"
+                                        value="#{ticketController.ticket.status}"
+                                        disabled="#{!ticketController.editMode}">
+                                        <f:selectItem itemLabel="OPEN" itemValue="OPEN" />
+                                        <f:selectItem itemLabel="IN_PROGRESS" itemValue="IN_PROGRESS" />
+                                        <f:selectItem itemLabel="CLOSED" itemValue="CLOSED" />
+                                    </p:selectOneMenu>
+                                    <p:message id="statusMsg" for="status" display="text" />
+                                </div>
+
+                                <div class="col-12 md:col-6 mb-1">
+                                    <p:outputLabel for="priority" value="Prioridade" />
+                                    <p:selectOneMenu
+                                        id="priority"
+                                        value="#{ticketController.ticket.priority}"
+                                        disabled="#{ticketController.viewMode}">
+                                        <f:selectItem itemLabel="LOW" itemValue="LOW" />
+                                        <f:selectItem itemLabel="MEDIUM" itemValue="MEDIUM" />
+                                        <f:selectItem itemLabel="HIGH" itemValue="HIGH" />
+                                        <f:selectItem itemLabel="CRITICAL" itemValue="CRITICAL" />
+                                    </p:selectOneMenu>
+                                    <p:message id="priorityMsg" for="priority" display="text" />
+                                </div>
+
+                                <ui:fragment rendered="#{ticketController.editMode}">
+                                    <div class="col-12 md:col-6 mb-1">
+                                        <p:outputLabel for="assignee" value="Responsavel" />
+                                        <p:selectOneMenu
+                                            id="assignee"
+                                            value="#{ticketController.ticket.assignee}"
+                                            converter="userConverter">
+                                            <f:selectItem itemLabel="Unassigned" itemValue="#{null}" />
+                                            <f:selectItems
+                                                value="#{ticketController.userList}"
+                                                var="user"
+                                                itemLabel="#{user.displayName != null ? user.displayName : user.username}"
+                                                itemValue="#{user}" />
+                                        </p:selectOneMenu>
+                                    </div>
+                                </ui:fragment>
+
+                                <ui:fragment rendered="#{!ticketController.editMode}">
+                                    <div class="col-12 md:col-6 mb-1">
+                                        <p:outputLabel for="assigneeView" value="Responsavel" />
+                                        <p:inputText
+                                            id="assigneeView"
+                                            value="#{ticketController.assigneeDisplayName}"
+                                            readonly="true" />
+                                    </div>
+                                </ui:fragment>
+
+                                <div class="col-12 md:col-6 mb-1">
+                                    <p:outputLabel for="reporter" value="Relator" />
+                                    <p:inputText
+                                        id="reporter"
+                                        value="#{ticketController.ticket.reporter != null ? (ticketController.ticket.reporter.displayName != null ? ticketController.ticket.reporter.displayName : ticketController.ticket.reporter.username) : ''}"
+                                        readonly="true" />
+                                </div>
+
+                                <ui:fragment rendered="#{not empty ticketController.ticket.id}">
+                                    <div class="col-12 md:col-6 mb-1">
+                                        <p:outputLabel for="createdAt" value="Criado em" />
+                                        <p:inputText
+                                            id="createdAt"
+                                            value="#{ticketController.ticket.createdAt}"
+                                            readonly="true">
+                                            <f:convertDateTime type="localDateTime" pattern="dd/MM/yyyy HH:mm" />
+                                        </p:inputText>
+                                    </div>
+                                    <div class="col-12 md:col-6 mb-1">
+                                        <p:outputLabel for="updatedAt" value="Atualizado em" />
+                                        <p:inputText
+                                            id="updatedAt"
+                                            value="#{ticketController.ticket.updatedAt}"
+                                            readonly="true">
+                                            <f:convertDateTime type="localDateTime" pattern="dd/MM/yyyy HH:mm" />
+                                        </p:inputText>
+                                    </div>
+                                </ui:fragment>
+                            </div>
+                        </p:outputPanel>
+                    </div>
+                </p:scrollPanel>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

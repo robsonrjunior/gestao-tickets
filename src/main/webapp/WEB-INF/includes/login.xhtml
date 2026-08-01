@@ -1,0 +1,50 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="jakarta.faces.html"
+    xmlns:f="jakarta.faces.core"
+    xmlns:p="primefaces"
+    xmlns:ui="jakarta.faces.facelets">
+    <div class="flex-grow-1 flex align-items-center justify-content-center w-full surface-100">
+        <h:form>
+            <p:card style="width: 400px">
+                <f:facet name="title">
+                    <div class="text-center">
+                        <p:graphicImage name="images/gestao-tickets.png" width="128" />
+                    </div>
+                </f:facet>
+
+                <div class="flex flex-column gap-3">
+                    <p:messages id="globalMsgs" showDetail="true" display="text" />
+
+                    <div>
+                        <p:outputLabel for="username" value="Username" />
+                        <p:inputText
+                            id="username"
+                            value="#{loginController.username}"
+                            required="true"
+                            placeholder="Username"
+                            styleClass="w-full" />
+                    </div>
+
+                    <div>
+                        <p:outputLabel for="password" value="Senha" />
+                        <p:password
+                            id="password"
+                            value="#{loginController.password}"
+                            required="true"
+                            placeholder="Senha"
+                            feedback="false"
+                            styleClass="w-full" />
+                    </div>
+
+                    <p:commandButton
+                        value="Entrar"
+                        icon="pi pi-sign-in"
+                        action="#{loginController.login}"
+                        styleClass="w-full"
+                        ajax="false" />
+                </div>
+            </p:card>
+        </h:form>
+    </div>
+</ui:composition>

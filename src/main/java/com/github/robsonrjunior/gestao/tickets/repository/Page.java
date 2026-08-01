@@ -1,0 +1,5 @@
+package com.github.robsonrjunior.gestao.tickets.repository;
+
+import java.util.List;
+
+public record Page<T>(List<T> content, long totalElements) {}

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="jakarta.faces.html"
+    xmlns:f="jakarta.faces.core"
+    xmlns:p="primefaces"
+    xmlns:ui="jakarta.faces.facelets">
+    <f:metadata>
+        <ui:insert name="metadata" />
+    </f:metadata>
+    <h:head>
+        <h:outputStylesheet name="css/reset.css" />
+        <h:outputStylesheet name="css/primeflex.min.css" />
+    </h:head>
+
+    <h:body styleClass="w-screen h-screen p-3 flex flex-column bg-gray-900">
+        <div class="surface-card border-1 surface-border border-round w-full h-full overflow-hidden flex flex-column">
+            <ui:fragment rendered="#{not empty request.remoteUser}">
+                <ui:include src="/WEB-INF/includes/shell.xhtml" />
+            </ui:fragment>
+
+            <ui:fragment rendered="#{empty request.remoteUser}">
+                <ui:include src="/WEB-INF/includes/login.xhtml" />
+            </ui:fragment>
+
+            <ui:include src="/WEB-INF/includes/footer.xhtml" />
+        </div>
+    </h:body>
+</html>

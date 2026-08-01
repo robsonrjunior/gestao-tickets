@@ -1,0 +1,49 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="jakarta.faces.html"
+    xmlns:f="jakarta.faces.core"
+    xmlns:p="primefaces"
+    xmlns:ui="jakarta.faces.facelets">
+    <style>
+        .ui-panelmenu-header {
+            border: 0 !important;
+            border-radius: 0 !important;
+        }
+        .ui-panelmenu-content {
+            border: 0 !important;
+            border-radius: 0 !important;
+        }
+        .ui-scrollpanel {
+            border-left: 0 !important;
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-radius: 0 !important;
+        }
+        .ui-panelmenu .ui-menuitem-link.active-menuitem,
+        .ui-panelmenu .ui-menuitem-link.active-menuitem .ui-menuitem-icon,
+        .ui-panelmenu .ui-menuitem-link.active-menuitem .ui-menuitem-text {
+            color: var(--primary-color) !important;
+            font-weight: 600;
+        }
+    </style>
+
+    <ui:param name="viewId" value="#{view.viewId}" />
+
+    <p:scrollPanel
+        mode="native"
+        styleClass="surface-card h-full p-0 m-0 border-right-1 surface-border border-noround"
+        style="width: 280px">
+        <p:panelMenu styleClass="h-auto m-0" multiple="false" stateful="false">
+            <p:submenu label="Tickets" icon="pi pi-fw pi-ticket"
+                expanded="#{viewId.startsWith('/ticket')}">
+                <p:menuitem value="Todos os Tickets" icon="pi pi-fw pi-ticket" outcome="ticket-list"
+                    styleClass="#{viewId.startsWith('/ticket') ? 'active-menuitem' : ''}" />
+            </p:submenu>
+            <p:submenu label="Administracao" icon="pi pi-fw pi-cog" rendered="#{currentUser.admin}"
+                expanded="#{viewId.startsWith('/user')}">
+                <p:menuitem value="Usuarios" icon="pi pi-fw pi-users" outcome="user-list"
+                    styleClass="#{viewId.startsWith('/user') ? 'active-menuitem' : ''}" />
+            </p:submenu>
+        </p:panelMenu>
+    </p:scrollPanel>
+</ui:composition>

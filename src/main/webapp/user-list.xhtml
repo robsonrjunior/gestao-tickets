@@ -1,0 +1,168 @@
+<ui:composition
+    template="/WEB-INF/templates/layout.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="jakarta.faces.html"
+    xmlns:f="jakarta.faces.core"
+    xmlns:p="primefaces"
+    xmlns:ui="jakarta.faces.facelets">
+    <ui:define name="content">
+        <style>
+            .ui-toolbar {
+                border: 0 !important;
+            }
+            .user-actions .ui-button {
+                margin: 0 !important;
+            }
+            .user-actions .ui-button:not(:first-child) {
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+            }
+            .user-actions .ui-button:not(:last-child) {
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+        </style>
+        <div class="h-full w-full flex flex-column">
+            <h:form id="userForm" style="display: flex; flex-direction: column; flex: 1; min-height: 0;">
+                <p:growl id="messages" showDetail="true" />
+                <p:toolbar>
+                    <p:toolbarGroup align="left" styleClass="border-none">
+                        <i class="pi pi-fw pi-users mr-2" />
+                        <span style="font-weight: bold">USUARIOS</span>
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="right" styleClass="border-none">
+                        <span class="ui-input-icon-left" style="margin-right: 0.5rem">
+                            <i class="pi pi-search" />
+                            <p:inputText
+                                id="globalFilter"
+                                onkeyup="PrimeFaces.debounce(() => PF('dtUsers').filter())"
+                                placeholder="Pesquisar" />
+                        </span>
+                        <span class="user-actions">
+                            <p:button value="Novo" icon="pi pi-plus" outcome="user" styleClass="ui-button-success">
+                                <f:param name="mode" value="create" />
+                            </p:button>
+                            <p:commandButton
+                                id="delete-users-button"
+                                value="#{userListController.deleteButtonMessage}"
+                                icon="pi pi-trash"
+                                actionListener="#{userListController.deleteSelectedUsers}"
+                                styleClass="ui-button-danger"
+                                disabled="#{!userListController.hasSelectedUsers()}"
+                                update="@this :userForm:messages :userForm:dt-users">
+                                <p:confirm
+                                    header="Confirmacao"
+                                    message="Excluir os usuarios selecionados?"
+                                    icon="pi pi-exclamation-triangle" />
+                            </p:commandButton>
+                        </span>
+                    </p:toolbarGroup>
+                </p:toolbar>
+
+                <p:scrollPanel mode="native" styleClass="w-full p-0 m-0 border-noround border-none flex-grow-1">
+                    <p:dataTable
+                id="dt-users"
+                var="user"
+                value="#{userListController.lazyUsers}"
+                lazy="true"
+                reflow="true"
+                selectionMode="multiple"
+                selection="#{userListController.selectedUsers}"
+                rowKey="#{user.id}"
+                paginator="true"
+                rows="10"
+                selectionRowMode="add"
+                paginatorPosition="bottom"
+                widgetVar="dtUsers">
+                <p:ajax event="rowSelect" update=":userForm:delete-users-button" />
+                <p:ajax event="rowUnselect" update=":userForm:delete-users-button" />
+                <p:ajax event="rowSelectCheckbox" update=":userForm:delete-users-button" />
+                <p:ajax event="rowUnselectCheckbox" update=":userForm:delete-users-button" />
+                <p:ajax event="toggleSelect" update=":userForm:delete-users-button" />
+
+                <p:column selectionBox="true" exportable="false" />
+
+                <p:column headerText="ID" sortBy="#{user.id}">
+                    <h:outputText value="#{user.id}" />
+                </p:column>
+
+                <p:column
+                    headerText="Username"
+                    sortBy="#{user.username}"
+                    filterBy="#{user.username}"
+                    filterMatchMode="contains">
+                    <h:outputText value="#{user.username}" />
+                </p:column>
+
+                <p:column
+                    headerText="Email"
+                    sortBy="#{user.email}"
+                    filterBy="#{user.email}"
+                    filterMatchMode="contains">
+                    <h:outputText value="#{user.email}" />
+                </p:column>
+
+                <p:column
+                    headerText="Nome de Exibicao"
+                    sortBy="#{user.displayName}"
+                    filterBy="#{user.displayName}"
+                    filterMatchMode="contains">
+                    <h:outputText value="#{user.displayName}" />
+                </p:column>
+
+                <p:column exportable="false" styleClass="text-center" headerText="Acoes" ariaHeaderText="Acoes">
+                    <span class="user-actions">
+                        <p:button icon="pi pi-eye" outcome="user" styleClass="ui-button-secondary">
+                            <f:param name="id" value="#{user.id}" />
+                            <f:param name="mode" value="view" />
+                        </p:button>
+                        <p:button icon="pi pi-pencil" outcome="user" styleClass="ui-button-success">
+                            <f:param name="id" value="#{user.id}" />
+                            <f:param name="mode" value="edit" />
+                        </p:button>
+                        <p:commandButton
+                            icon="pi pi-trash"
+                            styleClass="ui-button-danger"
+                            process="@this"
+                            oncomplete="PF('deleteUserDialog').show()">
+                            <f:setPropertyActionListener value="#{user}" target="#{userListController.selectedUser}" />
+                        </p:commandButton>
+                    </span>
+                </p:column>
+            </p:dataTable>
+
+            <p:confirmDialog
+                widgetVar="deleteUserDialog"
+                showEffect="fade"
+                width="300"
+                message="Excluir este usuario?"
+                header="Confirmar"
+                severity="warn">
+                <p:commandButton
+                    value="Sim"
+                    icon="pi pi-check"
+                    actionListener="#{userListController.deleteUser}"
+                    process="@this"
+                    update=":userForm:messages :userForm:dt-users :userForm:delete-users-button"
+                    oncomplete="PF('deleteUserDialog').hide()" />
+                <p:commandButton
+                    value="Nao"
+                    type="button"
+                    styleClass="ui-button-secondary"
+                    icon="pi pi-times"
+                    onclick="PF('deleteUserDialog').hide()" />
+            </p:confirmDialog>
+
+            <p:confirmDialog global="true" showEffect="fade" width="300">
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                <p:commandButton
+                    value="Nao"
+                    type="button"
+                    styleClass="ui-confirmdialog-no ui-button-secondary"
+                    icon="pi pi-times" />
+            </p:confirmDialog>
+                </p:scrollPanel>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

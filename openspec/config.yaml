@@ -1,0 +1,16 @@
+schema: spec-driven
+
+context: |
+  Tech stack: Java 21, Jakarta EE 11, Payara Micro 7.2026.5, PrimeFaces 15.0.0, PrimeFlex 3.3.1, MySQL 9.3
+  Build: Maven (mvnw), WAR packaging, Docker
+  Domain: Gestão de tickets — criar, atribuir, acompanhar e resolver tickets de suporte
+
+  UI:
+    - Preferir componentes PrimeFaces (tags p:) sempre que possível
+    - Usar PrimeFlex para layout, espaçamento e utilitários CSS (nunca Bootstrap)
+    - Skills em .opencode/skills/primefaces e primeflex são a referência de uso
+
+  Conventions:
+    - Model classes usam Lombok (@Getter, @Setter, @Data)
+    - Manter simples — priorizar manutenibilidade e entrega rápida
+    - Verificar com: ./mvnw -q -DskipTests compile

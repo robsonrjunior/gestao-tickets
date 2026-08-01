@@ -1,0 +1,207 @@
+<ui:composition
+    template="/WEB-INF/templates/layout.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="jakarta.faces.html"
+    xmlns:f="jakarta.faces.core"
+    xmlns:p="primefaces"
+    xmlns:ui="jakarta.faces.facelets">
+    <ui:define name="content">
+        <style>
+            .ui-toolbar {
+                border: 0 !important;
+            }
+            .ticket-actions .ui-button {
+                margin: 0 !important;
+            }
+            .ticket-actions .ui-button:not(:first-child) {
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+            }
+            .ticket-actions .ui-button:not(:last-child) {
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+        </style>
+        <div class="h-full w-full flex flex-column">
+            <h:form id="ticketForm" style="display: flex; flex-direction: column; flex: 1; min-height: 0;">
+                <p:growl id="messages" showDetail="true" />
+                <p:toolbar>
+                    <p:toolbarGroup align="left" styleClass="border-none">
+                        <i class="pi pi-fw pi-ticket mr-2" />
+                        <span style="font-weight: bold">TICKETS</span>
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="right" styleClass="border-none">
+                        <span class="ui-input-icon-left" style="margin-right: 0.5rem">
+                            <i class="pi pi-search" />
+                            <p:inputText
+                                id="globalFilter"
+                                onkeyup="PrimeFaces.debounce(() => PF('dtTickets').filter())"
+                                placeholder="Pesquisar" />
+                        </span>
+                        <span class="ticket-actions">
+                            <p:button value="Novo" icon="pi pi-plus" outcome="ticket" styleClass="ui-button-success">
+                                <f:param name="mode" value="create" />
+                            </p:button>
+                            <p:commandButton
+                                id="delete-tickets-button"
+                                value="#{ticketListController.deleteButtonMessage}"
+                                icon="pi pi-trash"
+                                actionListener="#{ticketListController.deleteSelectedTickets}"
+                                styleClass="ui-button-danger"
+                                disabled="#{!ticketListController.hasSelectedTickets()}"
+                                rendered="#{currentUser.admin}"
+                                update="@this :ticketForm:messages :ticketForm:dt-tickets">
+                                <p:confirm
+                                    header="Confirmacao"
+                                    message="Excluir os tickets selecionados?"
+                                    icon="pi pi-exclamation-triangle" />
+                            </p:commandButton>
+                        </span>
+                    </p:toolbarGroup>
+                </p:toolbar>
+
+                <p:scrollPanel mode="native" styleClass="w-full p-0 m-0 border-noround border-none flex-grow-1">
+                    <p:dataTable
+                        id="dt-tickets"
+                        var="ticket"
+                        value="#{ticketListController.lazyTickets}"
+                        lazy="true"
+                        reflow="true"
+                        selectionMode="multiple"
+                        selection="#{ticketListController.selectedTickets}"
+                        rowKey="#{ticket.id}"
+                        paginator="true"
+                        rows="10"
+                        selectionRowMode="add"
+                        paginatorPosition="bottom"
+                        widgetVar="dtTickets">
+                        <p:ajax event="rowSelect" update=":ticketForm:delete-tickets-button" />
+                        <p:ajax event="rowUnselect" update=":ticketForm:delete-tickets-button" />
+                        <p:ajax event="rowSelectCheckbox" update=":ticketForm:delete-tickets-button" />
+                        <p:ajax event="rowUnselectCheckbox" update=":ticketForm:delete-tickets-button" />
+                        <p:ajax event="toggleSelect" update=":ticketForm:delete-tickets-button" />
+
+                        <p:column selectionBox="true" exportable="false" />
+
+                        <p:column headerText="ID" sortBy="#{ticket.id}">
+                            <h:outputText value="#{ticket.id}" />
+                        </p:column>
+
+                        <p:column
+                            headerText="Titulo"
+                            sortBy="#{ticket.title}"
+                            filterBy="#{ticket.title}"
+                            filterMatchMode="contains">
+                            <h:outputText value="#{ticket.title}" />
+                        </p:column>
+
+                        <p:column
+                            headerText="Status"
+                            sortBy="#{ticket.status}"
+                            filterBy="#{ticket.status}"
+                            filterMatchMode="equals">
+                            <f:facet name="filter">
+                                <p:selectOneMenu onchange="PF('dtTickets').filter()" styleClass="ui-column-filter">
+                                    <f:selectItem itemLabel="Todos" itemValue="#{null}" />
+                                    <f:selectItem itemLabel="OPEN" itemValue="OPEN" />
+                                    <f:selectItem itemLabel="IN_PROGRESS" itemValue="IN_PROGRESS" />
+                                    <f:selectItem itemLabel="CLOSED" itemValue="CLOSED" />
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <h:outputText value="#{ticket.status}" />
+                        </p:column>
+
+                        <p:column
+                            headerText="Prioridade"
+                            sortBy="#{ticket.priority}"
+                            filterBy="#{ticket.priority}"
+                            filterMatchMode="equals">
+                            <f:facet name="filter">
+                                <p:selectOneMenu onchange="PF('dtTickets').filter()" styleClass="ui-column-filter">
+                                    <f:selectItem itemLabel="Todas" itemValue="#{null}" />
+                                    <f:selectItem itemLabel="LOW" itemValue="LOW" />
+                                    <f:selectItem itemLabel="MEDIUM" itemValue="MEDIUM" />
+                                    <f:selectItem itemLabel="HIGH" itemValue="HIGH" />
+                                    <f:selectItem itemLabel="CRITICAL" itemValue="CRITICAL" />
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <h:outputText value="#{ticket.priority}" />
+                        </p:column>
+
+                        <p:column headerText="Responsavel">
+                            <h:outputText value="#{ticket.assigneeName != null ? ticket.assigneeName : 'Unassigned'}" />
+                        </p:column>
+
+                        <p:column headerText="Relator">
+                            <h:outputText value="#{ticket.reporterName}" />
+                        </p:column>
+
+                        <p:column headerText="Criado em" sortBy="#{ticket.createdAt}">
+                            <h:outputText value="#{ticket.createdAt}">
+                                <f:convertDateTime type="localDateTime" pattern="dd/MM/yyyy HH:mm" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column exportable="false" styleClass="text-center" headerText="Acoes" ariaHeaderText="Acoes">
+                            <span class="ticket-actions">
+                                <p:button icon="pi pi-eye" outcome="ticket" styleClass="ui-button-secondary">
+                                    <f:param name="id" value="#{ticket.id}" />
+                                    <f:param name="mode" value="view" />
+                                </p:button>
+                                <p:button
+                                    icon="pi pi-pencil"
+                                    outcome="ticket"
+                                    styleClass="ui-button-success"
+                                    rendered="#{currentUser.admin}">
+                                    <f:param name="id" value="#{ticket.id}" />
+                                    <f:param name="mode" value="edit" />
+                                </p:button>
+                                <p:commandButton
+                                    icon="pi pi-trash"
+                                    styleClass="ui-button-danger"
+                                    rendered="#{currentUser.admin}"
+                                    process="@this"
+                                    oncomplete="PF('deleteTicketDialog').show()">
+                                    <f:setPropertyActionListener
+                                        value="#{ticket}"
+                                        target="#{ticketListController.selectedTicket}" />
+                                </p:commandButton>
+                            </span>
+                        </p:column>
+                    </p:dataTable>
+
+                    <p:confirmDialog
+                        widgetVar="deleteTicketDialog"
+                        showEffect="fade"
+                        width="300"
+                        message="Excluir este ticket?"
+                        header="Confirmar"
+                        severity="warn">
+                        <p:commandButton
+                            value="Sim"
+                            icon="pi pi-check"
+                            actionListener="#{ticketListController.deleteTicket}"
+                            process="@this"
+                            update=":ticketForm:messages :ticketForm:dt-tickets :ticketForm:delete-tickets-button"
+                            oncomplete="PF('deleteTicketDialog').hide()" />
+                        <p:commandButton
+                            value="Nao"
+                            type="button"
+                            styleClass="ui-button-secondary"
+                            icon="pi pi-times"
+                            onclick="PF('deleteTicketDialog').hide()" />
+                    </p:confirmDialog>
+
+                    <p:confirmDialog global="true" showEffect="fade" width="300">
+                        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                        <p:commandButton
+                            value="Nao"
+                            type="button"
+                            styleClass="ui-confirmdialog-no ui-button-secondary"
+                            icon="pi pi-times" />
+                    </p:confirmDialog>
+                </p:scrollPanel>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,173 @@
+<ui:composition
+    template="/WEB-INF/templates/layout.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="jakarta.faces.html"
+    xmlns:f="jakarta.faces.core"
+    xmlns:p="primefaces"
+    xmlns:ui="jakarta.faces.facelets">
+    <ui:define name="content">
+        <f:event type="preRenderView" listener="#{userController.loadForm}" />
+        <style>
+            .ui-toolbar {
+                border: 0 !important;
+            }
+            .user-actions .ui-button {
+                margin: 0 !important;
+            }
+            .user-actions .ui-button:not(:first-child) {
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+            }
+            .user-actions .ui-button:not(:last-child) {
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+            .ui-message {
+                border: 0 !important;
+                background: none !important;
+                padding: 0 !important;
+                margin: 0.25rem 0 0 0 !important;
+            }
+            .ui-message:empty {
+                display: none;
+            }
+            .ui-message .ui-message-error-detail {
+                display: block;
+                font-size: smaller;
+            }
+        </style>
+        <div class="h-full w-full flex flex-column">
+            <h:form id="userForm" style="display: flex; flex-direction: column; flex: 1; min-height: 0">
+                <p:growl id="messages" showDetail="true" />
+                <p:toolbar>
+                    <p:toolbarGroup align="left" styleClass="border-none">
+                        <i class="pi pi-fw pi-user mr-2" />
+                        <span style="font-weight: bold">
+                            <h:outputText rendered="#{empty userController.user.username}" value="Usuarios - Novo usuario" />
+
+                            <h:outputText
+                                rendered="#{not empty userController.user.username}"
+                                value="Usuarios - #{userController.user.username}" />
+                        </span>
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="right" styleClass="border-none">
+                        <p:outputPanel rendered="#{not userController.viewMode}" styleClass="user-actions">
+                            <p:commandButton
+                                value="Salvar"
+                                icon="pi pi-check"
+                                action="#{userController.save}"
+                                ajax="false" />
+                            <p:button
+                                value="Cancelar"
+                                icon="pi pi-times"
+                                outcome="user-list"
+                                styleClass="ui-button-secondary" />
+                        </p:outputPanel>
+                        <p:outputPanel rendered="#{userController.viewMode}" styleClass="user-actions">
+                            <p:button value="Editar" icon="pi pi-pencil" outcome="user" styleClass="ui-button-success">
+                                <f:param name="id" value="#{userController.id}" />
+                                <f:param name="mode" value="edit" />
+                            </p:button>
+                            <p:button
+                                value="Voltar"
+                                icon="pi pi-arrow-left"
+                                outcome="user-list"
+                                styleClass="ui-button-secondary" />
+                        </p:outputPanel>
+                    </p:toolbarGroup>
+                </p:toolbar>
+
+                <p:scrollPanel mode="native" styleClass="w-full p-0 m-0 border-noround border-none flex-grow-1">
+                    <div class="m-3">
+                        <f:facet name="title">
+                            <h:outputText value="#{userController.pageTitle}" />
+                        </f:facet>
+
+                        <p:outputPanel class="ui-fluid">
+                            <div class="grid">
+                                <ui:fragment rendered="#{not empty userController.user.id}">
+                                    <div class="col-4 mb-1">
+                                        <p:outputLabel for="userId" value="ID" />
+                                        <p:inputText
+                                            id="userId"
+                                            value="#{userController.user.id}"
+                                            required="true"
+                                            readonly="true" />
+                                        <p:message id="userIdMsg" for="userId" display="text" />
+                                    </div>
+                                    <div class="col-8 mb-1"></div>
+                                </ui:fragment>
+
+                                <div class="col-12 md:col-6 mb-1">
+                                    <p:outputLabel for="username" value="Username" />
+                                    <p:inputText
+                                        id="username"
+                                        value="#{userController.user.username}"
+                                        required="true"
+                                        readonly="#{userController.viewMode}" />
+                                    <p:message id="usernameMsg" for="username" display="text" />
+                                </div>
+                                <div class="col-12 md:col-6 mb-1">
+                                    <p:outputLabel for="email" value="Email" />
+                                    <p:inputText
+                                        id="email"
+                                        value="#{userController.user.email}"
+                                        required="true"
+                                        readonly="#{userController.viewMode}" />
+                                    <p:message id="emailMsg" for="email" display="text" />
+                                </div>
+                                <div class="col-12 mb-1">
+                                    <p:outputLabel for="displayName" value="Nome de Exibicao" />
+                                    <p:inputText
+                                        id="displayName"
+                                        value="#{userController.user.displayName}"
+                                        readonly="#{userController.viewMode}" />
+                                </div>
+                                <ui:fragment rendered="#{userController.createMode}">
+                                    <div class="col-12 md:col-6 mb-1">
+                                        <p:outputLabel for="password" value="Senha" />
+                                        <p:password
+                                            id="password"
+                                            value="#{userController.user.password}"
+                                            required="true"
+                                            feedback="false" />
+                                        <p:message id="passwordMsg" for="password" display="text" />
+                                    </div>
+                                    <div class="col-12 md:col-6 mb-1">
+                                        <p:outputLabel for="role" value="Perfil" />
+                                        <p:selectOneMenu
+                                            id="role"
+                                            value="#{userController.user.role}">
+                                            <f:selectItem itemLabel="Usuario" itemValue="USER" />
+                                            <f:selectItem itemLabel="Administrador" itemValue="ADMIN" />
+                                        </p:selectOneMenu>
+                                        <p:message id="roleMsg" for="role" display="text" />
+                                    </div>
+                                </ui:fragment>
+                                <ui:fragment rendered="#{userController.editMode}">
+                                    <div class="col-12 md:col-6 mb-1">
+                                        <p:outputLabel for="newPassword" value="Nova Senha (deixe em branco para manter)" />
+                                        <p:password
+                                            id="newPassword"
+                                            value="#{userController.newPassword}"
+                                            feedback="false" />
+                                    </div>
+                                    <div class="col-12 md:col-6 mb-1">
+                                        <p:outputLabel for="roleEdit" value="Perfil" />
+                                        <p:selectOneMenu
+                                            id="roleEdit"
+                                            value="#{userController.user.role}">
+                                            <f:selectItem itemLabel="Usuario" itemValue="USER" />
+                                            <f:selectItem itemLabel="Administrador" itemValue="ADMIN" />
+                                        </p:selectOneMenu>
+                                        <p:message id="roleEditMsg" for="roleEdit" display="text" />
+                                    </div>
+                                </ui:fragment>
+                            </div>
+                        </p:outputPanel>
+                    </div>
+                </p:scrollPanel>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>
