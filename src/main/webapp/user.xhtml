@@ -138,7 +138,9 @@
                                         <p:selectOneMenu
                                             id="role"
                                             value="#{userController.user.role}">
-                                            <f:selectItem itemLabel="Usuario" itemValue="USER" />
+                                            <f:selectItem itemLabel="Solicitante" itemValue="SOLICITANTE" />
+                                            <f:selectItem itemLabel="Suporte" itemValue="SUPORTE" />
+                                            <f:selectItem itemLabel="Gestor" itemValue="GESTOR" />
                                             <f:selectItem itemLabel="Administrador" itemValue="ADMIN" />
                                         </p:selectOneMenu>
                                         <p:message id="roleMsg" for="role" display="text" />
@@ -157,7 +159,9 @@
                                         <p:selectOneMenu
                                             id="roleEdit"
                                             value="#{userController.user.role}">
-                                            <f:selectItem itemLabel="Usuario" itemValue="USER" />
+                                            <f:selectItem itemLabel="Solicitante" itemValue="SOLICITANTE" />
+                                            <f:selectItem itemLabel="Suporte" itemValue="SUPORTE" />
+                                            <f:selectItem itemLabel="Gestor" itemValue="GESTOR" />
                                             <f:selectItem itemLabel="Administrador" itemValue="ADMIN" />
                                         </p:selectOneMenu>
                                         <p:message id="roleEditMsg" for="roleEdit" display="text" />

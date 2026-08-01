@@ -56,8 +56,8 @@ public class User {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 10, columnDefinition = "VARCHAR(10) NOT NULL DEFAULT 'USER'")
-    private Role role = Role.USER;
+    @Column(nullable = false, length = 20, columnDefinition = "VARCHAR(20) NOT NULL DEFAULT 'SOLICITANTE'")
+    private Role role = Role.SOLICITANTE;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

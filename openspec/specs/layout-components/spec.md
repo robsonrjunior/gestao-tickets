@@ -25,11 +25,25 @@ The system SHALL provide Facelets includes for topbar, navbar, footer, and shell
 - **THEN** content appears inside the shell with footer at the bottom
 
 ### Requirement: Navigation menu
-Navbar SHALL link to Tickets and (for ADMIN) Users via JSF navigation. No book/movie/series/rating entries.
+Navbar SHALL link to role-appropriate destinations via JSF navigation:
+- Meus Tickets → `meus-tickets` view (for SOLICITANTE)
+- Tickets → ticket list view (for SUPORTE, GESTOR, ADMIN)
+- Dashboard → `dashboard` view (for GESTOR, ADMIN)
+- Users → user list view (for ADMIN only)
+
+No book/movie/series/rating entries.
 
 #### Scenario: Tickets link
-- **WHEN** the user selects Tickets
+- **WHEN** an authorized user (SUPORTE, GESTOR, or ADMIN) selects Tickets
 - **THEN** navigation goes to the ticket list view
+
+#### Scenario: Meus Tickets link
+- **WHEN** a SOLICITANTE selects Meus Tickets
+- **THEN** navigation goes to the Meus Tickets view
+
+#### Scenario: Dashboard link
+- **WHEN** a GESTOR or ADMIN selects Dashboard
+- **THEN** navigation goes to the Dashboard view
 
 #### Scenario: Users link for ADMIN
 - **WHEN** an ADMIN selects Users

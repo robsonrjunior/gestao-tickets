@@ -7,11 +7,11 @@ CRUD de usuários (ADMIN), com username/email únicos, roles e seed do admin ini
 ## Requirements
 
 ### Requirement: User CRUD
-The system SHALL provide user CRUD via REST and JSF for ADMIN only. A user SHALL have unique username, unique email, BCrypt password, role (`USER` | `ADMIN`), optional display name, `createdAt`, and `updatedAt`. Password hashes SHALL never appear in API responses or views.
+The system SHALL provide user CRUD via REST and JSF for ADMIN only. A user SHALL have unique username, unique email, BCrypt password, role (`SOLICITANTE` | `SUPORTE` | `GESTOR` | `ADMIN`), optional display name, `createdAt`, and `updatedAt`. Password hashes SHALL never appear in API responses or views. The role `USER` SHALL NOT be offered or accepted.
 
 #### Scenario: Create user
 - **WHEN** an ADMIN creates a user with username, email, and password
-- **THEN** the system hashes the password, persists the user, and returns HTTP 201 without the password
+- **THEN** the system hashes the password, persists the user with the given role (or `SOLICITANTE` if omitted), and returns HTTP 201 without the password
 
 #### Scenario: Reject duplicates
 - **WHEN** username or email already exists
@@ -21,8 +21,12 @@ The system SHALL provide user CRUD via REST and JSF for ADMIN only. A user SHALL
 - **WHEN** an ADMIN updates or deletes an existing user
 - **THEN** the system applies the change (hashing a new password only when provided) and returns HTTP 200 or 204
 
+#### Scenario: Role options in form
+- **WHEN** an ADMIN opens the user create/edit form
+- **THEN** role choices are Solicitante, Suporte, Gestor, and Administrador (no Usuario/USER)
+
 ### Requirement: Seed admin
-On startup, if no ADMIN exists, the system SHALL create username `admin`, password `admin123` (BCrypt), displayName `Administrator`, email `admin@localhost`, role `ADMIN`.
+On startup, if no ADMIN exists, the system SHALL create username `admin`, password `admin123` (BCrypt), displayName `Administrator`, email `admin@localhost`, role `ADMIN`. Demo or bulk seed users SHALL use `SOLICITANTE` (or another valid non-USER role), never `USER`.
 
 #### Scenario: First startup
 - **WHEN** the app starts with no ADMIN user

@@ -34,10 +34,23 @@
         styleClass="surface-card h-full p-0 m-0 border-right-1 surface-border border-noround"
         style="width: 280px">
         <p:panelMenu styleClass="h-auto m-0" multiple="false" stateful="false">
+            <p:submenu label="Meus Tickets" icon="pi pi-fw pi-inbox"
+                rendered="#{currentUser.solicitante}"
+                expanded="#{viewId.startsWith('/meus-tickets')}">
+                <p:menuitem value="Meus Tickets" icon="pi pi-fw pi-inbox" outcome="meus-tickets"
+                    styleClass="#{viewId.startsWith('/meus-tickets') ? 'active-menuitem' : ''}" />
+            </p:submenu>
             <p:submenu label="Tickets" icon="pi pi-fw pi-ticket"
+                rendered="#{currentUser.canAccessTickets}"
                 expanded="#{viewId.startsWith('/ticket')}">
                 <p:menuitem value="Todos os Tickets" icon="pi pi-fw pi-ticket" outcome="ticket-list"
                     styleClass="#{viewId.startsWith('/ticket') ? 'active-menuitem' : ''}" />
+            </p:submenu>
+            <p:submenu label="Gestao" icon="pi pi-fw pi-chart-bar"
+                rendered="#{currentUser.gestorOrAdmin}"
+                expanded="#{viewId.startsWith('/dashboard')}">
+                <p:menuitem value="Dashboard" icon="pi pi-fw pi-chart-bar" outcome="dashboard"
+                    styleClass="#{viewId.startsWith('/dashboard') ? 'active-menuitem' : ''}" />
             </p:submenu>
             <p:submenu label="Administracao" icon="pi pi-fw pi-cog" rendered="#{currentUser.admin}"
                 expanded="#{viewId.startsWith('/user')}">

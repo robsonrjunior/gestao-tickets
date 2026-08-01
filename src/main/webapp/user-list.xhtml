@@ -110,6 +110,14 @@
                     <h:outputText value="#{user.displayName}" />
                 </p:column>
 
+                <p:column
+                    headerText="Perfil"
+                    sortBy="#{user.role}"
+                    filterBy="#{user.role}"
+                    filterMatchMode="contains">
+                    <h:outputText value="#{user.role}" />
+                </p:column>
+
                 <p:column exportable="false" styleClass="text-center" headerText="Acoes" ariaHeaderText="Acoes">
                     <span class="user-actions">
                         <p:button icon="pi pi-eye" outcome="user" styleClass="ui-button-secondary">

@@ -1,6 +1,8 @@
 package com.github.robsonrjunior.gestao.tickets.model;
 
 public enum Role {
-    USER,
+    SOLICITANTE,
+    SUPORTE,
+    GESTOR,
     ADMIN
 }

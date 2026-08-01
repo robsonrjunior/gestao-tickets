@@ -91,7 +91,7 @@ public class DatabaseSeeder {
                     user.setEmail(data.email);
                     user.setDisplayName(data.displayName);
                     user.setPassword(PasswordHasher.hash(data.password));
-                    user.setRole(Role.USER);
+                    user.setRole(Role.SOLICITANTE);
                     userRepository.save(user);
                     LOG.info("Seed: user created - " + data.username);
                 } else {

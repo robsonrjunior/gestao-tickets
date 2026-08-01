@@ -23,11 +23,27 @@ public class CurrentUser {
     }
 
     public boolean isAdmin() {
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        if (ctx == null) {
-            return false;
-        }
-        return ctx.getExternalContext().isUserInRole("ADMIN");
+        return isInRole("ADMIN");
+    }
+
+    public boolean isSolicitante() {
+        return isInRole("SOLICITANTE");
+    }
+
+    public boolean isSuporte() {
+        return isInRole("SUPORTE");
+    }
+
+    public boolean isGestor() {
+        return isInRole("GESTOR");
+    }
+
+    public boolean isGestorOrAdmin() {
+        return isGestor() || isAdmin();
+    }
+
+    public boolean isCanAccessTickets() {
+        return isSuporte() || isGestor() || isAdmin();
     }
 
     public String getUsername() {
@@ -43,5 +59,13 @@ public class CurrentUser {
             return null;
         }
         return userRepository.findByUsername(username).orElse(null);
+    }
+
+    private boolean isInRole(String role) {
+        FacesContext ctx = FacesContext.getCurrentInstance();
+        if (ctx == null) {
+            return false;
+        }
+        return ctx.getExternalContext().isUserInRole(role);
     }
 }
