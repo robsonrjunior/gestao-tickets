@@ -7,9 +7,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 @DataSourceDefinition(
     name = "java:app/GestaoTickets/GestaoTicketsDataSource",
     className = "com.mysql.cj.jdbc.MysqlDataSource",
-    user = "${db.user}",
-    password = "${db.password}",
-    url = "${db.url}"
+    user = "${MPCONFIG=db.user}",
+    password = "${MPCONFIG=db.password}",
+    url = "${MPCONFIG=db.url}"
 )
 @ApplicationScoped
 @Startup
