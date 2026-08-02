@@ -127,11 +127,14 @@
                                     <p:selectOneMenu
                                         id="status"
                                         value="#{ticketController.ticket.status}"
-                                        disabled="#{!ticketController.editMode}">
-                                        <f:selectItem itemLabel="OPEN" itemValue="OPEN" />
-                                        <f:selectItem itemLabel="IN_PROGRESS" itemValue="IN_PROGRESS" />
-                                        <f:selectItem itemLabel="CLOSED" itemValue="CLOSED" />
+                                        disabled="#{!ticketController.editMode}"
+                                        rendered="#{ticketController.editMode}">
+                                        <f:selectItems value="#{enumLabelBean.statusSelectItems}" />
                                     </p:selectOneMenu>
+                                    <p:tag
+                                        value="#{enumLabelBean.statusLabel(ticketController.ticket.status)}"
+                                        severity="#{enumLabelBean.statusSeverity(ticketController.ticket.status)}"
+                                        rendered="#{!ticketController.editMode}" />
                                     <p:message id="statusMsg" for="status" display="text" />
                                 </div>
 
@@ -140,12 +143,14 @@
                                     <p:selectOneMenu
                                         id="priority"
                                         value="#{ticketController.ticket.priority}"
-                                        disabled="#{ticketController.viewMode}">
-                                        <f:selectItem itemLabel="LOW" itemValue="LOW" />
-                                        <f:selectItem itemLabel="MEDIUM" itemValue="MEDIUM" />
-                                        <f:selectItem itemLabel="HIGH" itemValue="HIGH" />
-                                        <f:selectItem itemLabel="CRITICAL" itemValue="CRITICAL" />
+                                        disabled="#{ticketController.viewMode}"
+                                        rendered="#{!ticketController.viewMode}">
+                                        <f:selectItems value="#{enumLabelBean.prioritySelectItems}" />
                                     </p:selectOneMenu>
+                                    <p:tag
+                                        value="#{enumLabelBean.priorityLabel(ticketController.ticket.priority)}"
+                                        severity="#{enumLabelBean.prioritySeverity(ticketController.ticket.priority)}"
+                                        rendered="#{ticketController.viewMode}" />
                                     <p:message id="priorityMsg" for="priority" display="text" />
                                 </div>
 

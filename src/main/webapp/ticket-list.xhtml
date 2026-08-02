@@ -109,12 +109,10 @@
                             <f:facet name="filter">
                                 <p:selectOneMenu onchange="PF('dtTickets').filter()" styleClass="ui-column-filter">
                                     <f:selectItem itemLabel="Todos" itemValue="#{null}" />
-                                    <f:selectItem itemLabel="OPEN" itemValue="OPEN" />
-                                    <f:selectItem itemLabel="IN_PROGRESS" itemValue="IN_PROGRESS" />
-                                    <f:selectItem itemLabel="CLOSED" itemValue="CLOSED" />
+                                    <f:selectItems value="#{enumLabelBean.statusSelectItems}" />
                                 </p:selectOneMenu>
                             </f:facet>
-                            <h:outputText value="#{ticket.status}" />
+                            <p:tag value="#{enumLabelBean.statusLabel(ticket.status)}" severity="#{enumLabelBean.statusSeverity(ticket.status)}" />
                         </p:column>
 
                         <p:column
@@ -125,13 +123,10 @@
                             <f:facet name="filter">
                                 <p:selectOneMenu onchange="PF('dtTickets').filter()" styleClass="ui-column-filter">
                                     <f:selectItem itemLabel="Todas" itemValue="#{null}" />
-                                    <f:selectItem itemLabel="LOW" itemValue="LOW" />
-                                    <f:selectItem itemLabel="MEDIUM" itemValue="MEDIUM" />
-                                    <f:selectItem itemLabel="HIGH" itemValue="HIGH" />
-                                    <f:selectItem itemLabel="CRITICAL" itemValue="CRITICAL" />
+                                    <f:selectItems value="#{enumLabelBean.prioritySelectItems}" />
                                 </p:selectOneMenu>
                             </f:facet>
-                            <h:outputText value="#{ticket.priority}" />
+                            <p:tag value="#{enumLabelBean.priorityLabel(ticket.priority)}" severity="#{enumLabelBean.prioritySeverity(ticket.priority)}" />
                         </p:column>
 
                         <p:column headerText="Responsavel">
