@@ -35,11 +35,17 @@
                             <i class="pi pi-search" />
                             <p:inputText
                                 id="globalFilter"
+                                styleClass="ui-datatable-globalfilter"
                                 onkeyup="PrimeFaces.debounce(() => PF('dtTickets').filter())"
                                 placeholder="Pesquisar" />
                         </span>
                         <span class="ticket-actions">
-                            <p:button value="Novo" icon="pi pi-plus" outcome="ticket" styleClass="ui-button-success">
+                            <p:button
+                                id="newTicketButton"
+                                value="Novo"
+                                icon="pi pi-plus"
+                                outcome="ticket"
+                                styleClass="ui-button-success">
                                 <f:param name="mode" value="create" />
                             </p:button>
                             <p:commandButton
@@ -144,11 +150,16 @@
 
                         <p:column exportable="false" styleClass="text-center" headerText="Acoes" ariaHeaderText="Acoes">
                             <span class="ticket-actions">
-                                <p:button icon="pi pi-eye" outcome="ticket" styleClass="ui-button-secondary">
+                                <p:button
+                                    id="viewTicketButton"
+                                    icon="pi pi-eye"
+                                    outcome="ticket"
+                                    styleClass="ui-button-secondary">
                                     <f:param name="id" value="#{ticket.id}" />
                                     <f:param name="mode" value="view" />
                                 </p:button>
                                 <p:button
+                                    id="editTicketButton"
                                     icon="pi pi-pencil"
                                     outcome="ticket"
                                     styleClass="ui-button-success"
@@ -157,6 +168,7 @@
                                     <f:param name="mode" value="edit" />
                                 </p:button>
                                 <p:commandButton
+                                    id="deleteTicketButton"
                                     icon="pi pi-trash"
                                     styleClass="ui-button-danger"
                                     rendered="#{currentUser.admin}"
@@ -178,6 +190,7 @@
                         header="Confirmar"
                         severity="warn">
                         <p:commandButton
+                            id="confirmDeleteTicketYes"
                             value="Sim"
                             icon="pi pi-check"
                             actionListener="#{ticketListController.deleteTicket}"
@@ -185,6 +198,7 @@
                             update=":ticketForm:messages :ticketForm:dt-tickets :ticketForm:delete-tickets-button"
                             oncomplete="PF('deleteTicketDialog').hide()" />
                         <p:commandButton
+                            id="confirmDeleteTicketNo"
                             value="Nao"
                             type="button"
                             styleClass="ui-button-secondary"

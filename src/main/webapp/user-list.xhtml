@@ -35,11 +35,17 @@
                             <i class="pi pi-search" />
                             <p:inputText
                                 id="globalFilter"
+                                styleClass="ui-datatable-globalfilter"
                                 onkeyup="PrimeFaces.debounce(() => PF('dtUsers').filter())"
                                 placeholder="Pesquisar" />
                         </span>
                         <span class="user-actions">
-                            <p:button value="Novo" icon="pi pi-plus" outcome="user" styleClass="ui-button-success">
+                            <p:button
+                                id="newUserButton"
+                                value="Novo"
+                                icon="pi pi-plus"
+                                outcome="user"
+                                styleClass="ui-button-success">
                                 <f:param name="mode" value="create" />
                             </p:button>
                             <p:commandButton
@@ -120,15 +126,24 @@
 
                 <p:column exportable="false" styleClass="text-center" headerText="Acoes" ariaHeaderText="Acoes">
                     <span class="user-actions">
-                        <p:button icon="pi pi-eye" outcome="user" styleClass="ui-button-secondary">
+                        <p:button
+                            id="viewUserButton"
+                            icon="pi pi-eye"
+                            outcome="user"
+                            styleClass="ui-button-secondary">
                             <f:param name="id" value="#{user.id}" />
                             <f:param name="mode" value="view" />
                         </p:button>
-                        <p:button icon="pi pi-pencil" outcome="user" styleClass="ui-button-success">
+                        <p:button
+                            id="editUserButton"
+                            icon="pi pi-pencil"
+                            outcome="user"
+                            styleClass="ui-button-success">
                             <f:param name="id" value="#{user.id}" />
                             <f:param name="mode" value="edit" />
                         </p:button>
                         <p:commandButton
+                            id="deleteUserButton"
                             icon="pi pi-trash"
                             styleClass="ui-button-danger"
                             process="@this"
@@ -147,6 +162,7 @@
                 header="Confirmar"
                 severity="warn">
                 <p:commandButton
+                    id="confirmDeleteUserYes"
                     value="Sim"
                     icon="pi pi-check"
                     actionListener="#{userListController.deleteUser}"
@@ -154,6 +170,7 @@
                     update=":userForm:messages :userForm:dt-users :userForm:delete-users-button"
                     oncomplete="PF('deleteUserDialog').hide()" />
                 <p:commandButton
+                    id="confirmDeleteUserNo"
                     value="Nao"
                     type="button"
                     styleClass="ui-button-secondary"

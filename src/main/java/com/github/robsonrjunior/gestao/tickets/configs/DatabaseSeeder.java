@@ -35,18 +35,19 @@ public class DatabaseSeeder {
 
     @Transactional
     public void onStartup(@Observes @Initialized(ApplicationScoped.class) Object event) {
-        if (configRepository.findByName("gestao-tickets-initial").isPresent()) {
-            LOG.info("Seed: database already seeded, skipping");
-            return;
+        if (configRepository.findByName("gestao-tickets-initial").isEmpty()) {
+            seedAdmin();
+            seedUsers();
+            seedTickets();
+            SeederExecution execution = new SeederExecution();
+            execution.setName("gestao-tickets-initial");
+            execution.setSeededAt(LocalDateTime.now());
+            configRepository.save(execution);
+            LOG.info("Seed: database seeding completed");
+        } else {
+            LOG.info("Seed: database already seeded, skipping initial seed");
         }
-        seedAdmin();
-        seedUsers();
-        seedTickets();
-        SeederExecution execution = new SeederExecution();
-        execution.setName("gestao-tickets-initial");
-        execution.setSeededAt(LocalDateTime.now());
-        configRepository.save(execution);
-        LOG.info("Seed: database seeding completed");
+        ensureRoleUsers();
     }
 
     private void seedAdmin() {
@@ -73,36 +74,47 @@ public class DatabaseSeeder {
 
     private void seedUsers() {
         UserData[] users = {
-            new UserData("alice", "alice@email.com", "Alice Silva", "alice123"),
-            new UserData("bruno", "bruno@email.com", "Bruno Costa", "bruno123"),
-            new UserData("camila", "camila@email.com", "Camila Oliveira", "camila123"),
-            new UserData("diego", "diego@email.com", "Diego Santos", "diego123"),
-            new UserData("eliane", "eliane@email.com", "Eliane Ferreira", "eliane123"),
+            new UserData("alice", "alice@email.com", "Alice Silva", "alice123", Role.SOLICITANTE),
+            new UserData("bruno", "bruno@email.com", "Bruno Costa", "bruno123", Role.SOLICITANTE),
+            new UserData("camila", "camila@email.com", "Camila Oliveira", "camila123", Role.SOLICITANTE),
+            new UserData("diego", "diego@email.com", "Diego Santos", "diego123", Role.SOLICITANTE),
+            new UserData("eliane", "eliane@email.com", "Eliane Ferreira", "eliane123", Role.SOLICITANTE),
+            new UserData("suporte", "suporte@email.com", "Suporte User", "suporte123", Role.SUPORTE),
+            new UserData("gestor", "gestor@email.com", "Gestor User", "gestor123", Role.GESTOR),
         };
 
         for (UserData data : users) {
-            try {
-                if (
-                    userRepository.findByUsername(data.username).isEmpty() &&
-                    userRepository.findByEmail(data.email).isEmpty()
-                ) {
-                    User user = new User();
-                    user.setUsername(data.username);
-                    user.setEmail(data.email);
-                    user.setDisplayName(data.displayName);
-                    user.setPassword(PasswordHasher.hash(data.password));
-                    user.setRole(Role.SOLICITANTE);
-                    userRepository.save(user);
-                    LOG.info("Seed: user created - " + data.username);
-                } else {
-                    LOG.info("Seed: user already exists - " + data.username);
-                }
-            } catch (Exception e) {
-                LOG.warning("Seed: failed to create user '" + data.username + "' - " + e.getMessage());
-            }
+            createUserIfMissing(data);
         }
 
         LOG.info("Seed: users seeding completed");
+    }
+
+    private void ensureRoleUsers() {
+        createUserIfMissing(new UserData("suporte", "suporte@email.com", "Suporte User", "suporte123", Role.SUPORTE));
+        createUserIfMissing(new UserData("gestor", "gestor@email.com", "Gestor User", "gestor123", Role.GESTOR));
+    }
+
+    private void createUserIfMissing(UserData data) {
+        try {
+            if (
+                userRepository.findByUsername(data.username).isEmpty() &&
+                userRepository.findByEmail(data.email).isEmpty()
+            ) {
+                User user = new User();
+                user.setUsername(data.username);
+                user.setEmail(data.email);
+                user.setDisplayName(data.displayName);
+                user.setPassword(PasswordHasher.hash(data.password));
+                user.setRole(data.role);
+                userRepository.save(user);
+                LOG.info("Seed: user created - " + data.username + " (" + data.role + ")");
+            } else {
+                LOG.info("Seed: user already exists - " + data.username);
+            }
+        } catch (Exception e) {
+            LOG.warning("Seed: failed to create user '" + data.username + "' - " + e.getMessage());
+        }
     }
 
     private void seedTickets() {
@@ -155,7 +167,7 @@ public class DatabaseSeeder {
             .orElse(null);
     }
 
-    private record UserData(String username, String email, String displayName, String password) {}
+    private record UserData(String username, String email, String displayName, String password, Role role) {}
 
     private record TicketData(
         String title,

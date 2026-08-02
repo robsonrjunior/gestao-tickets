@@ -24,6 +24,8 @@
         <compiler-plugin.version>3.15.0</compiler-plugin.version>
         <war-plugin.version>3.5.1</war-plugin.version>
         <payara-micro-plugin.version>2.5.3</payara-micro-plugin.version>
+        <primefaces.version>15.0.0</primefaces.version>
+        <failsafe-plugin.version>3.5.3</failsafe-plugin.version>
     </properties>
 
     <dependencies>
@@ -45,8 +47,33 @@
         <dependency>
             <groupId>org.primefaces</groupId>
             <artifactId>primefaces</artifactId>
-            <version>15.0.0</version>
+            <version>${primefaces.version}</version>
             <classifier>jakarta</classifier>
+        </dependency>
+        <!-- E2E tests (Failsafe *IT; not run by Surefire) -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.11.4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>4.28.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.primefaces</groupId>
+            <artifactId>primefaces-selenium-core</artifactId>
+            <version>${primefaces.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.primefaces</groupId>
+            <artifactId>primefaces-selenium-components</artifactId>
+            <version>${primefaces.version}</version>
+            <scope>test</scope>
         </dependency>
         <!-- Dotenv -->
         <dependency>
@@ -150,4 +177,32 @@
             </resource>
         </resources>
     </build>
+
+    <profiles>
+        <profile>
+            <id>e2e</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>${failsafe-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <includes>
+                                <include>**/*IT.java</include>
+                            </includes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

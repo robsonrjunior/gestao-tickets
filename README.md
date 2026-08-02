@@ -96,9 +96,26 @@ sudo fuser -k 8080/tcp
 ```bash
 make build    # package the application
 make package  # clean and package
-make test     # run tests
+make test     # run unit tests (Surefire; no browser)
+make test-e2e # run e2e (Failsafe + Chrome; app must already be up)
 make clean    # remove build artifacts
 ```
+
+### E2E tests (JUnit 5 + primefaces-selenium)
+
+Pré-requisitos: MySQL (utils), app no ar (`make start` ou `make dev`), e seed aplicado (login `admin`/`admin123`).
+
+Browser: Chrome/Chromium no PATH, **ou** `make chrome-tools` (baixa Chrome for Testing em `.tools/`, sem sudo).
+
+```bash
+docker compose -f docker-compose.utils.yml up -d
+make start          # em outro terminal, ou deixe rodando
+make test-e2e       # setup chrome-tools se preciso + ./mvnw verify -Pe2e
+```
+
+Base URL padrão: `http://localhost:8080/` (Payara Micro `contextRoot=/`). Ajuste em `src/test/resources/primefaces-selenium/config.properties` se necessário (ex.: Docker em `/gestao-tickets/`).
+
+Headless off: edite `webdriver.headless=false` em `config.properties`. Override do binário: `CHROME_BIN=/path/to/chrome make test-e2e`.
 
 ---
 

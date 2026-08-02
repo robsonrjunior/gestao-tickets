@@ -52,11 +52,13 @@
                     <p:toolbarGroup align="right" styleClass="border-none">
                         <p:outputPanel rendered="#{!ticketController.viewMode and ticketController.canSave()}" styleClass="ticket-actions">
                             <p:commandButton
+                                id="saveButton"
                                 value="Salvar"
                                 icon="pi pi-check"
                                 action="#{ticketController.save}"
                                 ajax="false" />
                             <p:button
+                                id="cancelButton"
                                 value="Cancelar"
                                 icon="pi pi-times"
                                 outcome="ticket-list"
@@ -64,6 +66,7 @@
                         </p:outputPanel>
                         <p:outputPanel rendered="#{ticketController.viewMode}" styleClass="ticket-actions">
                             <p:button
+                                id="editButton"
                                 value="Editar"
                                 icon="pi pi-pencil"
                                 outcome="ticket"
@@ -73,6 +76,7 @@
                                 <f:param name="mode" value="edit" />
                             </p:button>
                             <p:button
+                                id="backButton"
                                 value="Voltar"
                                 icon="pi pi-arrow-left"
                                 outcome="ticket-list"

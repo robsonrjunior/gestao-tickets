@@ -28,8 +28,9 @@
                         #{currentUser.user.displayName ne null ? currentUser.user.displayName : currentUser.username}
                     </span>
 
-                    <h:form styleClass="mb-0">
+                    <h:form id="logoutForm" styleClass="mb-0">
                         <p:commandButton
+                            id="logoutButton"
                             value="Sair"
                             icon="pi pi-sign-out"
                             styleClass="ui-button-secondary ui-button-sm"

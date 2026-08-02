@@ -27,3 +27,14 @@ Primary pages (`index.xhtml`, `ticket-list.xhtml`, `ticket.xhtml`, `user-list.xh
 #### Scenario: Dashboard and Meus Tickets in shell
 - **WHEN** an authorized user opens `dashboard.xhtml` or `meus-tickets.xhtml`
 - **THEN** each renders inside the shared layout content area
+
+### Requirement: Stable component ids for e2e
+Interactive primary controls used by automated UI tests SHALL declare explicit Facelets `id` attributes so client IDs are stable across builds (not auto-generated `j_idt*`). At minimum this includes: login form and its submit control, logout form/control, ticket and user list "Novo" actions, and primary form actions Salvar / Cancelar / Editar / Voltar on ticket and user forms.
+
+#### Scenario: Login form has stable ids
+- **WHEN** the login page is rendered
+- **THEN** the login form and its primary submit control have explicit ids usable as stable Selenium locators
+
+#### Scenario: Primary ticket and user actions have stable ids
+- **WHEN** ticket or user list/form pages are rendered for an authorized user
+- **THEN** Novo, Salvar, Cancelar, Editar, and Voltar action components that exist on the page have explicit ids

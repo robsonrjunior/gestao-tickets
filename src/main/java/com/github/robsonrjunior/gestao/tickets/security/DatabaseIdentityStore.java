@@ -23,7 +23,8 @@ public class DatabaseIdentityStore implements IdentityStore {
             return CredentialValidationResult.NOT_VALIDATED_RESULT;
         }
         User user = repository.findByUsername(upc.getCaller()).orElse(null);
-        if (user == null || !PasswordHasher.check(upc.getPasswordAsString(), user.getPassword())) {
+        boolean valid = user != null && PasswordHasher.check(upc.getPasswordAsString(), user.getPassword());
+        if (!valid) {
             return CredentialValidationResult.INVALID_RESULT;
         }
         return new CredentialValidationResult(user.getUsername(), Set.of(user.getRole().name()));

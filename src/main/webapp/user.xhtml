@@ -53,22 +53,30 @@
                     <p:toolbarGroup align="right" styleClass="border-none">
                         <p:outputPanel rendered="#{not userController.viewMode}" styleClass="user-actions">
                             <p:commandButton
+                                id="saveButton"
                                 value="Salvar"
                                 icon="pi pi-check"
                                 action="#{userController.save}"
                                 ajax="false" />
                             <p:button
+                                id="cancelButton"
                                 value="Cancelar"
                                 icon="pi pi-times"
                                 outcome="user-list"
                                 styleClass="ui-button-secondary" />
                         </p:outputPanel>
                         <p:outputPanel rendered="#{userController.viewMode}" styleClass="user-actions">
-                            <p:button value="Editar" icon="pi pi-pencil" outcome="user" styleClass="ui-button-success">
+                            <p:button
+                                id="editButton"
+                                value="Editar"
+                                icon="pi pi-pencil"
+                                outcome="user"
+                                styleClass="ui-button-success">
                                 <f:param name="id" value="#{userController.id}" />
                                 <f:param name="mode" value="edit" />
                             </p:button>
                             <p:button
+                                id="backButton"
                                 value="Voltar"
                                 icon="pi pi-arrow-left"
                                 outcome="user-list"

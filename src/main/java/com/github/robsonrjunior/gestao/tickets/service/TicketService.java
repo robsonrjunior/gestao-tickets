@@ -58,8 +58,12 @@ public class TicketService {
         if (ticket.getPriority() == null) {
             ticket.setPriority(TicketPriority.MEDIUM);
         }
-        if (ticket.getReporter() == null && principal != null && principal.getName() != null) {
-            userRepository.findByUsername(principal.getName()).ifPresent(ticket::setReporter);
+        if (ticket.getReporter() == null) {
+            String username = (principal != null && principal.getName() != null) ? principal.getName() : "admin";
+            userRepository.findByUsername(username).ifPresent(ticket::setReporter);
+            if (ticket.getReporter() == null) {
+                userRepository.findByUsername("admin").ifPresent(ticket::setReporter);
+            }
         }
         return repository.save(ticket);
     }

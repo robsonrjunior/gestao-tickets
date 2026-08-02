@@ -8,6 +8,7 @@ openspec/changes/
 # Others
 .env
 node_modules/
+.tools/
 
 # Logs
 *.log

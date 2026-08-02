@@ -6,6 +6,7 @@ import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import jakarta.security.enterprise.AuthenticationStatus;
 import jakarta.security.enterprise.SecurityContext;
 import jakarta.security.enterprise.authentication.mechanism.http.AuthenticationParameters;
 import jakarta.security.enterprise.credential.UsernamePasswordCredential;
@@ -35,14 +36,14 @@ public class LoginController {
         HttpServletRequest request = (HttpServletRequest) externalContext.getRequest();
         HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
 
-        securityContext.authenticate(
+        AuthenticationStatus status = securityContext.authenticate(
             request,
             response,
             AuthenticationParameters.withParams()
                 .credential(new UsernamePasswordCredential(username, password))
         );
 
-        if (request.getUserPrincipal() != null) {
+        if (status == AuthenticationStatus.SUCCESS) {
             try {
                 externalContext.redirect(externalContext.getRequestContextPath() + "/index.xhtml");
             } catch (Exception e) {

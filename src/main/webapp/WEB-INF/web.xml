@@ -16,6 +16,7 @@
             <web-resource-name>Public</web-resource-name>
             <url-pattern>/login.xhtml</url-pattern>
             <url-pattern>/jakarta.faces.resource/*</url-pattern>
+            <url-pattern>/favicon.ico</url-pattern>
         </web-resource-collection>
     </security-constraint>
 

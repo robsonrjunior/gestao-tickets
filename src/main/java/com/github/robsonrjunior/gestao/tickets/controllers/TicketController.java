@@ -82,6 +82,9 @@ public class TicketController implements Serializable {
     public String save() {
         boolean creating = ticket.getId() == null;
         if (creating) {
+            if (ticket.getReporter() == null && currentUser.getUser() != null) {
+                ticket.setReporter(currentUser.getUser());
+            }
             ticketService.create(ticket);
         } else {
             ticketService.update(ticket.getId(), ticket);
